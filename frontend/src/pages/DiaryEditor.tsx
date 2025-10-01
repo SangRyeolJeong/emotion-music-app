@@ -48,6 +48,13 @@ export default function DiaryEditor() {
   const [success, setSuccess] = useState<string | null>(null)
   const [savedEmotion, setSavedEmotion] = useState<string | null>(null)
   
+  // Translation info state
+  const [translationInfo, setTranslationInfo] = useState<{
+    wasTranslated: boolean
+    detectedLanguage: string
+    analyzedText: string
+  } | null>(null)
+  
   // 음악 재생 관련 상태
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -132,6 +139,13 @@ export default function DiaryEditor() {
       // 1. 감정 분석
       const emotionResult = await analyzeEmotion({ text: diaryText })
       const topEmotion = emotionResult.predictions[0]
+      
+      // Store translation info
+      setTranslationInfo({
+        wasTranslated: emotionResult.was_translated,
+        detectedLanguage: emotionResult.detected_language,
+        analyzedText: emotionResult.analyzed_text
+      })
       
       // 2. 일기 저장
       const diary = {
@@ -392,6 +406,42 @@ export default function DiaryEditor() {
               mt: 0.5,
             }}>
               오늘의 주요 감정
+            </Typography>
+          </GlassCard>
+        )}
+
+        {/* 번역 정보 표시 */}
+        {translationInfo && translationInfo.wasTranslated && (
+          <GlassCard sx={{ mb: 3, p: 2 }}>
+            <Typography sx={{ 
+              color: 'rgba(100, 255, 150, 0.9)',
+              fontSize: '14px',
+              fontWeight: 500,
+              mb: 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}>
+              🌐 번역됨: {translationInfo.detectedLanguage.toUpperCase()} → EN
+            </Typography>
+            <Typography sx={{ 
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '12px',
+              fontStyle: 'italic',
+              lineHeight: 1.4,
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              padding: '8px 12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              "{translationInfo.analyzedText}"
+            </Typography>
+            <Typography sx={{ 
+              color: 'rgba(255, 255, 255, 0.5)',
+              fontSize: '11px',
+              mt: 1,
+            }}>
+              감정 분석을 위해 영어로 번역되었습니다
             </Typography>
           </GlassCard>
         )}

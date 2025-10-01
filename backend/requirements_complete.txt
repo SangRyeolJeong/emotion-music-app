@@ -27,5 +27,9 @@ langdetect==1.0.9
 # Music API
 spotipy==2.23.0
 
-# HTTP Requests
+# HTTP Requests and Utilities
 requests==2.31.0
+base64
+
+# Standard Library (already included in Python)
+# pathlib, logging, time, secrets, hashlib, os, sys, asyncio, datetime, typing

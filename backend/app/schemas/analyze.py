@@ -13,3 +13,8 @@ class EmotionPrediction(BaseModel):
 class AnalyzeResponse(BaseModel):
     predictions: List[EmotionPrediction]
     all_probabilities: List[float]
+    # Translation metadata
+    original_text: str
+    analyzed_text: str
+    detected_language: str
+    was_translated: bool

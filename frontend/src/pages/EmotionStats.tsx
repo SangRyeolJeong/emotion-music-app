@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Box, Typography, Grid, Card, CardContent } from '@mui/material'
-import { BarChart as BarChartIcon, TrendingUp as TrendingUpIcon, Psychology as PsychologyIcon } from '@mui/icons-material'
+import { Box, Typography, Grid, Card, CardContent, IconButton } from '@mui/material'
+import { BarChart as BarChartIcon, TrendingUp as TrendingUpIcon, Psychology as PsychologyIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, CalendarToday as CalendarIcon } from '@mui/icons-material'
 import { EMOTION_EMOJIS, DEFAULT_EMOJI } from '../constants/emotions'
 import { getDiaries } from '../api/diaries'
 import { GlassCard } from '../components/GlassCard'
@@ -54,7 +54,7 @@ const emotionConfig: Record<string, { color: string; koreanName: string }> = {
 const EmotionStats = () => {
   const [emotionStats, setEmotionStats] = useState<EmotionStat[]>([])
   const [totalEntries, setTotalEntries] = useState(0)
-  const [currentMonth] = useState(new Date())
+  const [currentMonth, setCurrentMonth] = useState(new Date())
 
   useEffect(() => {
     const loadEmotionStats = async () => {
@@ -125,6 +125,27 @@ const EmotionStats = () => {
     loadEmotionStats()
   }, [currentMonth])
 
+  // 월 네비게이션 함수들
+  const handlePrevMonth = () => {
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev)
+      newDate.setMonth(newDate.getMonth() - 1)
+      return newDate
+    })
+  }
+
+  const handleNextMonth = () => {
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev)
+      newDate.setMonth(newDate.getMonth() + 1)
+      return newDate
+    })
+  }
+
+  const handleToday = () => {
+    setCurrentMonth(new Date())
+  }
+
   const formatMonth = (date: Date) => {
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월`
   }
@@ -181,6 +202,87 @@ const EmotionStats = () => {
               Emotion Analytics
             </Typography>
           </Box>
+          {/* 월 네비게이션 */}
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            mb: 2,
+            gap: 2
+          }}>
+            <IconButton 
+              onClick={handlePrevMonth}
+              sx={{ 
+                color: '#FFD700',
+                background: 'rgba(255, 215, 0, 0.1)',
+                '&:hover': {
+                  background: 'rgba(255, 215, 0, 0.2)',
+                  transform: 'scale(1.1)',
+                },
+                transition: 'all 0.3s ease',
+              }}
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+            
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              background: 'rgba(255, 215, 0, 0.1)',
+              borderRadius: '12px',
+              px: 3,
+              py: 1,
+              border: '1px solid rgba(255, 215, 0, 0.3)',
+            }}>
+              <CalendarIcon sx={{ color: '#FFD700', mr: 1, fontSize: '20px' }} />
+              <Typography 
+                sx={{ 
+                  color: '#FFD700',
+                  fontSize: '18px',
+                  fontWeight: 600,
+                  minWidth: '140px',
+                  textAlign: 'center',
+                }}
+              >
+                {formatMonth(currentMonth)}
+              </Typography>
+            </Box>
+            
+            <IconButton 
+              onClick={handleNextMonth}
+              sx={{ 
+                color: '#FFD700',
+                background: 'rgba(255, 215, 0, 0.1)',
+                '&:hover': {
+                  background: 'rgba(255, 215, 0, 0.2)',
+                  transform: 'scale(1.1)',
+                },
+                transition: 'all 0.3s ease',
+              }}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+            
+            <IconButton 
+              onClick={handleToday}
+              sx={{ 
+                color: 'rgba(255, 255, 255, 0.7)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                '&:hover': {
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: '#FFD700',
+                },
+                transition: 'all 0.3s ease',
+                fontSize: '12px',
+                padding: '6px 12px',
+                borderRadius: '8px',
+              }}
+              title="이번 달로 이동"
+            >
+              오늘
+            </IconButton>
+          </Box>
+          
           <Typography 
             variant="h6" 
             sx={{ 
@@ -190,7 +292,7 @@ const EmotionStats = () => {
               mb: 1,
             }}
           >
-            {formatMonth(currentMonth)} 감정 분석 리포트 📊
+            감정 분석 리포트 📊
           </Typography>
           <Typography 
             variant="body2" 
